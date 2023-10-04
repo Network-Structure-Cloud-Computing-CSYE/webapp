@@ -1,10 +1,11 @@
-
+require('dotenv').config()
 
 const { Sequelize, DataTypes } = require('sequelize')
 
 const dbConfig = require('../config/dbConfig.js')
 
 const sequelize = new Sequelize(
+
     dbConfig.DB,
     dbConfig.USER,
     dbConfig.PASSWORD, {
@@ -23,12 +24,12 @@ const sequelize = new Sequelize(
  
 
 
-sequelize.authenticate()
-.then(() => {
-    console.log('connected')
-})
-.catch(error => {
-    console.log('Error: ' + error)
-})
+// sequelize.authenticate()
+// .then(() => {
+//     console.log('connected')
+// })
+// .catch(error => {
+//     console.log('Error: ' + error)
+// })
 
 module.exports = sequelize;
