@@ -5,16 +5,8 @@ john	doe	john.doe@example.com	abc123
 jane	doe	jane.doe@example.com	xyz456
 
 
-{
-  "name": "AI",
-  "points": 10,
-  "num_of_attempts": 3,
-  "deadline": "2016-08-29T09:12:33.001Z"
-}
 
-
-
-<!-- ssh -i ~/.ssh/digitalocean root@143.198.150.247
+ssh -i ~/.ssh/digitalocean root@143.198.150.247
 
 scp -i ~/.ssh/digitalocean Naman_Gujarathi_002770751_03.zip root@143.198.150.247:/opt   
 
@@ -110,4 +102,4 @@ ssh -i ~/.ssh/digitalocean root@143.198.150.247
 curl -v http://localhost:3003/healthz
 
 
- -->
+ 
