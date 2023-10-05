@@ -16,7 +16,7 @@ app.use('/', userRouter)
  
 
 app.use('*', (req, res) => {
-    res.status(400).send('Invalid route')
+    res.status(405).send('Method not allowed')
 })
 
  
