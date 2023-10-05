@@ -8,10 +8,10 @@ console.log(req.query,req.body)
      
     try {
        const x = await sequelize.authenticate();
-      //  console.log(x);
+       console.log(x);
         res.status(200).set('Cache-Control', 'no-cache').end();
       } catch (error) {
-        // console.log("ERRRRORRR");
+        console.log("ERRRRORRR");
         res.status(503).set('Cache-Control', 'no-cache').end();
       }
 
