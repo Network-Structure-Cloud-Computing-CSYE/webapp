@@ -12,17 +12,17 @@ jobs:
 
 
    env:
-     DB_DATABASE: ${{secrets.DB_DATABASE}}
-     DB_HOST: ${{secrets.DB_HOST}}
-     DB_PASS: ${{secrets.DB_PASS}}
-     DB_USER: ${{secrets.DB_USER}}
+     DB: ${{secrets.DB_DATABASE}}
+     HOST: ${{secrets.DB_HOST}}
+     DB_PASSWORD: ${{secrets.DB_PASS}}
+     DB_USERNAME: ${{secrets.DB_USER}}
      DB_NAME: ${{secrets.DB_NAME}}
      DB_DIALECT: ${{secrets.DB_DIALECT}}
      DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
      DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
      DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
      DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
-     PORT: ${{secrets.PORT}}
+     APP_PORT: ${{secrets.PORT}}
      USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
 
    steps:
@@ -42,11 +42,11 @@ jobs:
 
      - name: Change MySQL Root Password
        run: |
-        mysql -u $DB_USER -proot -e "ALTER USER '$DB_USER'@'$DB_HOST' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
+        mysql -u $DB_USERNAME -proot -e "ALTER USER '$DB_USERNAME'@'$HOST' IDENTIFIED BY '$DB_PASSWORD'; FLUSH PRIVILEGES;"
 
      - name: Create Database
        run: |
-         mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE"
+         mysql -h $HOST -u $DB_USERNAME -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DB"
 
      - name: Install Node.js
        uses: actions/setup-node@v2
