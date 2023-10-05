@@ -8,7 +8,9 @@ on:
 
 jobs:
  build:
+   name: ci-health-check
    runs-on: ubuntu-latest
+
 
 
    env:
