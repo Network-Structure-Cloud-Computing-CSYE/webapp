@@ -1,5 +1,6 @@
-const atob = require('atob');  // Add this to the top of your file to decode base64
-const {User} = require('../models/user');
+const atob = require('atob');
+const { User } = require('../models/user');
+const bcrypt = require('bcrypt');
 
 const authenticate = async (req, res, next) => {
     try {
@@ -11,14 +12,22 @@ const authenticate = async (req, res, next) => {
 
         const base64Credentials = authHeader.split(' ')[1];
         const credentials = atob(base64Credentials).split(':');
-        const [email, password] = credentials;
+        const [email, providedPassword] = credentials;
 
         const user = await User.findOne({ where: { email } });
 
-        if (!user || user.password !== password) {
+        if (!user) {
             throw new Error();
         }
-        console.log('Authentication Successfull')
+
+        // Verify the password using bcrypt
+        const isPasswordValid = await bcrypt.compare(providedPassword, user.password);
+
+        if (!isPasswordValid) {
+            throw new Error();
+        }
+
+        console.log('Authentication Successful');
         req.user = user;
         next();
     } catch (error) {
