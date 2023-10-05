@@ -2,6 +2,7 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const {User} = require('./api/models/user');
 const Assignment = require('./api/models/assignment')
+const bcrypt = require('bcrypt');
 
 
 const app = require('./api/app');
@@ -19,19 +20,21 @@ const processCSV = () => {
         fs.createReadStream('/opt/user.csv')
           .pipe(csv())
           .on('data', async (row) => {
-            // Create users if they don't exist.
-            // console.dir(User, { depth: null });
+            try {
+              // Hash the password
+              const hashedPassword = await bcrypt.hash(row.password, 10); // 10 is the number of salt rounds
 
-            
-
-            await User.findOrCreate({
-              where: { email: row.email },
-              defaults: {
-                first_name: row.first_name,
-                last_name: row.last_name,
-                password: row.password
-              }
-            });
+              await User.findOrCreate({
+                where: { email: row.email },
+                defaults: {
+                  first_name: row.first_name,
+                  last_name: row.last_name,
+                  password: hashedPassword
+                }
+              });
+            } catch (error) {
+              console.error('Error saving user:', error);
+            }
           })
           .on('end', () => {
             console.log('CSV file successfully processed');
