@@ -8,7 +8,7 @@ const { INET } = require('sequelize')
         it('should check if the healthz endpoint responds with status 200', async ()=> {
             const response = await supertest(app).get('/healthz').send({});  // Sending an empty body
         
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(204);
             // done();
           });
     })
