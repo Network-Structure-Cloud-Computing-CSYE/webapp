@@ -11,7 +11,6 @@ const dbConfig = require('../config/dbConfig.js')
 console.log( `
 dbConfig.DB = ${dbConfig.DB} 
 dbConfig.USER=${dbConfig.USER}
-dbConfig.USER=${dbConfig.USER}
 dbConfig.PASSWORD=${dbConfig.PASSWORD}
 host: dbConfig.HOST=${dbConfig.HOST}
 dialect: dbConfig.dialect=${dbConfig.dialect}
