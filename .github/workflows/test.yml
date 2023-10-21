@@ -33,15 +33,9 @@ jobs:
 
     - name: Check Packer Configuration Format
       run: |
-        packer fmt  packer/test.pkr.hcl
-        if [ $? -ne 0 ]; then
-          echo "Packer template format check failed. Please fix the formatting."
-          exit 1
-        fi
+        packer fmt -check packer/test.pkr.hcl
+      
     - name: Validate Packer Configuration
       run: |
         packer validate packer/test.pkr.hcl
-        if [ $? -ne 0 ]; then
-          echo "Packer template validation failed. Please fix the template."
-          exit 1
-        fi
+      

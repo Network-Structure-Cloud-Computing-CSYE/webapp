@@ -50,7 +50,7 @@ source "amazon-ebs" "my-ami" {
   ami_regions = [
     "us-east-1",
   ]
-  ami_users  = ["${var.ami_users}"]     # 715971441311
+  ami_users  = ["${var.ami_users}"]    # 715971441311
   access_key = "${var.aws_access_key}" # Use environment variable
   secret_key = "${var.aws_secret_key}" # Use environment variable
   aws_polling {
