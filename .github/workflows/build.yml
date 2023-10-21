@@ -52,6 +52,9 @@ jobs:
 
     - run: npm test
 
+    - name: Initialize Packer
+      run: packer init packer/test.pkr.hcl
+      
     - name: Installing Packer
       id: packer_build
       uses: hashicorp/packer-github-actions@master
