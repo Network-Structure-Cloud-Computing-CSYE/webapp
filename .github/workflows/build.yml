@@ -64,19 +64,19 @@ jobs:
       run: packer -v
 
     - name: Add required plugins
-      run: packer init .
+      run: packer init packer/test.pkr.hcl
 
     - name: format packer content
-      run: packer fmt .
+      run: packer fmt packer/test.pkr.hcl
 
     - name: validate packer
-      run: packer validate .
+      run: packer validate packer/test.pkr.hcl
 
     - name: packer build
       run: |
         packer build -var "region=$AWS_DEFAULT_REGION" \
         -var "ssh_username=$SSH_USERNAME" \
-        -var "ami_users=$AWS_AMI_USERS" test.pkr.hcl
+        -var "ami_users=$AWS_AMI_USERS" packer/test.pkr.hcl
 
 
 
