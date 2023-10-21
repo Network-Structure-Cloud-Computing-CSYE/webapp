@@ -57,16 +57,26 @@ jobs:
       with:
         args: zip -r webapp.zip .
 
-    - name: Initialize Packer
-      run: packer init packer/test.pkr.hcl
+    - name: Setup `packer`
+      uses: hashicorp/setup-packer@main
 
-    - name: Installing Packer
-      id: packer_build
-      uses: hashicorp/packer-github-actions@master
-      with:
-        command: build
-        target: ./packer/test.pkr.hcl
-        working_directory: .
+    - name: Check version of packer
+      run: packer -v
+
+    - name: Add required plugins
+      run: packer init .
+
+    - name: format packer content
+      run: packer fmt .
+
+    - name: validate packer
+      run: packer validate .
+
+    - name: packer build
+      run: |
+        packer build -var "region=$AWS_DEFAULT_REGION" \
+        -var "ssh_username=$SSH_USERNAME" \
+        -var "ami_users=$AWS_AMI_USERS" test.pkr.hcl
 
 
 
