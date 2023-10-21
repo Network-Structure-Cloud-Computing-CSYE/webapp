@@ -1,107 +1,58 @@
-name: packer-hcl
+name: Node.js CI [Unit tests]
 
+ 
 on:
   pull_request:
-    types: [closed]
-    branches:
-       - main
-  workflow_dispatch:
-
-jobs:
- build:
-   if: github.event.pull_request.merged
-   runs-on: ubuntu-latest
-
-
-   env:
-     DB_DATABASE: ${{secrets.DB_DATABASE}}
-     DB_HOST: ${{secrets.DB_HOST}}
-     DB_PASS: ${{secrets.DB_PASS}}
-     DB_USER: ${{secrets.DB_USER}}
-     DB_NAME: ${{secrets.DB_NAME}}
-     DB_DIALECT: ${{secrets.DB_DIALECT}}
-     DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
-     DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
-     DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
-     DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
-     PORT: ${{secrets.PORT}}
-     USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
-
-   steps:
-     - name: Checkout code
-       uses: actions/checkout@v2
-
-     - name: Shutdown Ubuntu MySQL (SUDO)
-       run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
-     - name: Install MySQL
-       run: |
-         sudo apt-get update -qy
-         sudo apt-get install -qy mysql-server
-
-     - name: Start MySQL Service
-       run: sudo service mysql start
-
-     - name: Change MySQL Root Password
-       run: |
-        mysql -u $DB_USER -proot -e "ALTER USER '$DB_USER'@'$DB_HOST' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
-
-     - name: Create Database
-       run: |
-         mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE"
-
-     - name: Install Node.js
-       uses: actions/setup-node@v2
-       with:
-         node-version: 14
-
-     - name: Install dependencies
-       run: npm install
-
-     - name: Run tests
-       run: npm test
+    branches: [ main ]
 
 
 jobs:
-  merge:
-    if: github.event.pull_request.merged
+  tests:
     runs-on: ubuntu-latest
     env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        AWS_AMI_USERS: ${{ secrets.AWS_AMI_USERS }}
-        SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
-        SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-        DEFAULT_SUBNET_ID: ${{ secrets.DEFAULT_SUBNET_ID }}
-        # LT_NAME: ${{secrets.LT_NAME}}
-        # ASG_NAME: ${{secrets.ASG_NAME}}
-
+      DB_DATABASE: ${{secrets.DB_DATABASE}}
+      DB_HOST: ${{secrets.DB_HOST}}
+      DB_PASS: ${{secrets.DB_PASS}}
+      DB_USER: ${{secrets.DB_USER}}
+      DB_NAME: ${{secrets.DB_NAME}}
+      DB_DIALECT: ${{secrets.DB_DIALECT}}
+      DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
+      DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
+      DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
+      DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
+      PORT: ${{secrets.PORT}}
+      USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
+      SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      DEFAULT_SUBNET_ID: ${{ secrets.DEFAULT_SUBNET_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_AMI_USERS: ${{ secrets.AWS_AMI_USERS }}
+    strategy:
+      matrix:
+        node-version: [16.x]
     steps:
-      - name: Checkout Git Repository
-        uses: actions/checkout@v4
-       
-      - name: Create .env File
-        run: |
-          echo "PORT=${{secrets.PORT}}" >> .env
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> .env
-          echo "DB_USER=${{secrets.DB_USER}}" >> .env
-          echo "DB_PASS=${{secrets.DB_PASS}}" >> .env
-          echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
-          echo "DB_DATABASE=${{secrets.DB_DATABASE}}" >> .env
+    - uses: actions/checkout@v2
+    - run: npm i    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
 
-     
-      - name: Zip Git Repository
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -r webapp.zip .
-          source: .
-          destination: .
+ 
+    - name: Start MySql Server
+      run: sudo systemctl start mysql
 
-      - name: Packer build
-        uses: hashicorp/packer-github-actions@master
-        with:
-          command: build
-          target: aws_ami.pkr.hcl
-          working_directory: .
+ 
+    - name: Create database in the MySql server
+      run: sudo mysql --user=$DB_USER --password=$DB_PASS -e "create database $DB_DATABASE";
 
+    - run: npm test
+
+    - name: Packer Build
+      uses: hashicorp/packer-github-actions@master
+      command: build
+      target: ./packer/test.pkr.hcl
+      working_directory: .

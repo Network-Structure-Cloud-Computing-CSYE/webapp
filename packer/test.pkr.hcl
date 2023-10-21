@@ -28,7 +28,7 @@ variable "subnet_id" {
 }
 
 variable "ami_users" {
-  type    = list(string)
+  type    = string
   default = env("AWS_AMI_USERS") # dev AWS profile 
 }
 
@@ -50,10 +50,9 @@ source "amazon-ebs" "my-ami" {
   ami_regions = [
     "us-east-1",
   ]
-  ami_users      = "${var.ami_users}"    # 715971441311
+  ami_users  = ["${var.ami_users}"]     # 715971441311
   access_key = "${var.aws_access_key}" # Use environment variable
   secret_key = "${var.aws_secret_key}" # Use environment variable
-${{ secrets.AWS_AMI_USERS }}
   aws_polling {
     delay_seconds = 120
     max_attempts  = 50
@@ -81,7 +80,7 @@ build {
   }
 
   provisioner "shell" {
-  
+
     script = "./scripts/setup_dependencies.sh" # setup maria-db server, node, npm and create database 'db_sequelize_mysql' 
   }
 }
