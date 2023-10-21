@@ -3,6 +3,7 @@ name: Packer Build
  
 on:
   pull_request:
+  types: [closed]
     branches: [ main ]
 
 
@@ -52,7 +53,9 @@ jobs:
     - run: npm test
 
     - name: Installing Packer
+      id: packer_build
       uses: hashicorp/packer-github-actions@master
-
-    - name: Packer Build
-      run: packer build packer/test.pkr.hcl
+      with:
+        command: build
+        target: ./packer/test.pkr.hcl
+        working_directory: .
