@@ -74,7 +74,7 @@ jobs:
 
     - name: packer build
       run: |
-        packer build -var "region=$AWS_DEFAULT_REGION" \
+        packer build -var "aws_region=$AWS_DEFAULT_REGION" \
         -var "ssh_username=$SSH_USERNAME" \
         -var "ami_users=$AWS_AMI_USERS" packer/test.pkr.hcl
 
