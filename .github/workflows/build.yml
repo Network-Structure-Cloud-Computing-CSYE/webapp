@@ -1,4 +1,4 @@
-name: Node.js CI [Unit tests]
+name: Packer Build
 
  
 on:
@@ -53,6 +53,4 @@ jobs:
 
     - name: Packer Build
       uses: hashicorp/packer-github-actions@master
-      command: build
-      target: ./packer/test.pkr.hcl
-      working_directory: .
+      run: packer build packer/test.pkr.hcl
