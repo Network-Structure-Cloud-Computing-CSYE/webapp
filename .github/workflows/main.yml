@@ -1,67 +1,3 @@
-# name: Health Check Integeration Test
-
-# on:
-#  pull_request:
-#    branches:
-#      - main
-#  workflow_dispatch:
-
-# jobs:
-#  build:
-#    runs-on: ubuntu-latest
-
-
-#    env:
-#      DB_DATABASE: ${{secrets.DB_DATABASE}}
-#      DB_HOST: ${{secrets.DB_HOST}}
-#      DB_PASS: ${{secrets.DB_PASS}}
-#      DB_USER: ${{secrets.DB_USER}}
-#      DB_NAME: ${{secrets.DB_NAME}}
-#      DB_DIALECT: ${{secrets.DB_DIALECT}}
-#      DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
-#      DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
-#      DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
-#      DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
-#      PORT: ${{secrets.PORT}}
-#      USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
-
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-
-#      - name: Shutdown Ubuntu MySQL (SUDO)
-#        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
-#      - name: Install MySQL
-#        run: |
-#          sudo apt-get update -qy
-#          sudo apt-get install -qy mysql-server
-
-#      - name: Start MySQL Service
-#        run: sudo service mysql start
-
-#      - name: Change MySQL Root Password
-#        run: |
-#         mysql -u $DB_USER -proot -e "ALTER USER '$DB_USER'@'$DB_HOST' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
-
-#         sudo mysql -u $DB_USER -e "create user 'naman'@'localhost' identified by 'password'"
-
-#      - name: Create Database
-#        run: |
-#          mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE"
-
-#      - name: Install Node.js
-#        uses: actions/setup-node@v2
-#        with:
-#          node-version: 14
-
-#      - name: Install dependencies
-#        run: npm install
-
-#      - name: Run tests
-#        run: npm test
-
-
 
 name: Node.js CI [Unit tests]
 
@@ -72,7 +8,7 @@ on:
 
 
 jobs:
-  tests:
+  Unit-Test:
     runs-on: ubuntu-latest
     env:
       DB_DATABASE: ${{secrets.DB_DATABASE}}

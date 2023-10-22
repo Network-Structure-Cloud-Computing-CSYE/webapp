@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  tests:
+  PackerBuild:
     runs-on: ubuntu-latest
     env:
       DB_DATABASE: ${{secrets.DB_DATABASE}}

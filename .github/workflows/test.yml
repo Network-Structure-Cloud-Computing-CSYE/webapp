@@ -11,7 +11,7 @@ on:
  
 
 jobs:
-  tests:
+  Packer-Validate-Format:
     runs-on: ubuntu-latest
     env:
       SOURCE_AMI: ${{ secrets.SOURCE_AMI }}
