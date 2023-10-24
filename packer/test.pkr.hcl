@@ -12,11 +12,8 @@ variable "aws_region" {
   default = env("AWS_DEFAULT_REGION")
 }
 
-        variable "source_ami" {
-
-
-
-  type    =     string
+variable "source_ami" {
+  type    = string
   default = env("SOURCE_AMI") # Debian 22.04 LTS
 }
 
@@ -78,7 +75,7 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "file" { // provision the files
-    source      = "./webapp.zip"
+    source      = "./webapp2.zip"
     destination = "/home/admin/"
   }
 
