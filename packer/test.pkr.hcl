@@ -12,8 +12,11 @@ variable "aws_region" {
   default = env("AWS_DEFAULT_REGION")
 }
 
-variable "source_ami" {
-  type    = string
+        variable "source_ami" {
+
+
+
+  type    =     string
   default = env("SOURCE_AMI") # Debian 22.04 LTS
 }
 
