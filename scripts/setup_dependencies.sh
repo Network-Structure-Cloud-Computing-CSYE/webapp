@@ -39,7 +39,7 @@ sudo useradd -s /bin/bash -g csye6225 -d /home/csye6225 -m csye6225
 
 
 sudo mv /home/admin/webapp.zip /home/csye6225/
-cd /home/csye6225/ &&  mkdir webapp 
+cd /home/csye6225/ &&  sudo mkdir webapp 
 sudo mv /home/csye6225/webapp.zip /home/csye6225/webapp
 cd webapp &&  sudo unzip webapp.zip  
 
@@ -51,11 +51,9 @@ sudo chmod -R 750 /home/csye6225/webapp
 # mv /opt/webapp/* /opt 
 # cd /opt 
 # sudo chmod +x *
-ls
+
 sudo mv /home/csye6225/webapp/user.csv /opt
-pwd
-sudo ls -al
-cd /home/csye6225/webapp
+
 sudo npm i 
 # sudo node server.js
 
