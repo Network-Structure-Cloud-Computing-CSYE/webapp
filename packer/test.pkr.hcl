@@ -84,6 +84,8 @@ build {
     script = "./scripts/setup_dependencies.sh" # setup maria-db server, node, npm and create database 'db_sequelize_mysql' 
   }
 
+
  
 
 }
+
