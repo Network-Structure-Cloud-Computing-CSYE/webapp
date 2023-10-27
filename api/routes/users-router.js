@@ -39,7 +39,7 @@ router.post('/v1/assignments', authenticate, async (req, res) => {
         res.status(201).json(assignment);
     } catch (error) {
         console.log(error)
-        res.status(500).send('Internal Server Error');
+        res.status(503).send('Service Unavailaible');
     }
 });
 
@@ -100,7 +100,7 @@ router.delete('/v1/assignments/:id', authenticate, async (req, res) => {
         res.status(204).send();  // No Content response when deletion is successful
     } catch (error) {
         // Handle unexpected errors. You can also log the error for debugging.
-        res.status(500).send('Internal Server Error');
+        res.status(503).send('Service Unavailaible');
     }
 });
 
@@ -125,7 +125,7 @@ router.get('/v1/assignments', authenticate, async (req, res) => {
     } catch (error) {
         console.error("Error fetching assignments:", error);
         
-        res.status(500).send('Internal Server Error');
+        res.status(503).send('Service Unavailaible');
     }
 });
 
