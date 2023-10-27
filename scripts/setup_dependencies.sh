@@ -55,7 +55,9 @@ sudo chmod -R 755 /home/csye6225/webapp
 # sudo chmod +x *
 
 sudo mv /home/csye6225/webapp/user.csv /opt
+
 sudo chmod -R 755 /opt/user.csv
+
 
 sudo npm i 
 # sudo node server.js
