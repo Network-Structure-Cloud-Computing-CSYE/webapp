@@ -9,7 +9,9 @@ sleep 30
 sudo apt-get update -y
 
 # Install MariaDB server
-# sudo apt install -y mariadb-server
+
+sudo apt-get install mariadb-client -y
+
 
 # Start MariaDB server
 # sudo systemctl start mariadb
@@ -45,7 +47,7 @@ cd webapp &&  sudo unzip webapp.zip
 
 
 sudo chown -R csye6225:csye6225 /home/csye6225/webapp
-sudo chmod -R 750 /home/csye6225/webapp
+sudo chmod -R 755 /home/csye6225/webapp
 
 
 # mv /opt/webapp/* /opt 
@@ -53,6 +55,7 @@ sudo chmod -R 750 /home/csye6225/webapp
 # sudo chmod +x *
 
 sudo mv /home/csye6225/webapp/user.csv /opt
+sudo chmod -R 755 /opt/user.csv
 
 sudo npm i 
 # sudo node server.js
@@ -77,7 +80,7 @@ User=csye6225
 Group=csye6225
 WorkingDirectory=/home/csye6225/webapp
 
-ExecStart=/usr/bin/node /home/csye6225/webapp/app.js
+ExecStart=/usr/bin/node /home/csye6225/webapp/server.js
 Restart=always
 RestartSec=5
 
