@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith('Basic ')) {
-            throw new Error();
+            return res.status(401).send({ error: 'Authentication failed. Missing Basic auth header.' });
         }
 
         const base64Credentials = authHeader.split(' ')[1];
@@ -17,21 +17,22 @@ const authenticate = async (req, res, next) => {
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
-            throw new Error();
+            return res.status(401).send({ error: 'Authentication failed. User not found.' });
         }
 
         // Verify the password using bcrypt
         const isPasswordValid = await bcrypt.compare(providedPassword, user.password);
 
         if (!isPasswordValid) {
-            throw new Error();
+            return res.status(401).send({ error: 'Authentication failed. Invalid password.' });
         }
 
         console.log('Authentication Successful');
         req.user = user;
         next();
     } catch (error) {
-        res.status(401).send({ error: 'Authentication failed. Please provide valid credentials.' });
+        
+        res.status(503).send({ error: 'Service Unavailaible' });
     }
 };
 
