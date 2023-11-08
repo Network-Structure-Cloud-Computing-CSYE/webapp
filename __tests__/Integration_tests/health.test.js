@@ -23,8 +23,9 @@ jest.mock('../../metrics/index', () => {
         it('should check if the healthz endpoint responds with status 200', async ()=> {
             const response = await supertest(app).get('/healthz').send({});  // Sending an empty body
         
-            expect(response.status).toBe(503);
+            expect(response.status).toBe(200);
             console.log(`logger.info was called ${mockInfo.mock.calls.length} times`);
+            console.log(`logger.error was called ${mockError.mock.calls.length} times`);
             console.log(`client.increment was called ${mockIncrement.mock.calls.length} times`);
             // done();
           });
