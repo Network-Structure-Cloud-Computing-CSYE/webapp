@@ -91,7 +91,7 @@ jobs:
     # strategy:
     #   matrix:
     #     node-version: [16.x]
-    # steps:
+    steps:
     # - uses: actions/checkout@v2
     # - run: npm i    
     # - name: Use Node.js ${{ matrix.node-version }}
