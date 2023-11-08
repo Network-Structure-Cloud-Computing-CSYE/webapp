@@ -81,7 +81,7 @@ build {
 
   provisioner "file" { // provision the files
     source      = "./config/config.json"
-    destination = "/home/admin/"
+    destination = "/home/admin/config.json"
   }
 
   provisioner "shell" {
