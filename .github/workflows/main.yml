@@ -69,6 +69,7 @@ name: Node.js CI [Unit tests]
 on:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 
 jobs:
