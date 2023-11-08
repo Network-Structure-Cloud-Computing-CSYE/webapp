@@ -98,8 +98,8 @@ sudo npm i
 #   }
 # }' > /home/admin/config-file.json
 
-sudo mv /home/admin/config-file.json /home/csye6225/
-sudo chown -R csye6225:csye6225 /home/csye6225/config-file.json
+sudo mv /home/admin/config.json /home/csye6225/
+sudo chown -R csye6225:csye6225 /home/csye6225/config.json
 
 
 
