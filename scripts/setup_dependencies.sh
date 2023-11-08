@@ -41,9 +41,10 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
 sudo groupadd csye6225
 sudo useradd -s /bin/bash -g csye6225 -d /home/csye6225 -m csye6225
-sudo touch /home/csye6225/csye6225.log
-sudo chmod 766 /home/csye6225/csye6225.log
-sudo chown -R csye6225:csye6225 /home/csye6225/csye6225.log
+sudo touch /home/admin/csye6225.log
+sudo chmod 766 /home/admin/csye6225.log
+sudo chown -R csye6225:csye6225 /home/admin/csye6225.log
+
 
 
 
