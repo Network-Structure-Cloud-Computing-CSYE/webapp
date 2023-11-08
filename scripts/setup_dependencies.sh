@@ -35,9 +35,16 @@ sudo apt install -y unzip
 pwd
 # mkdir webapp && cd webapp
 
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+
 
 sudo groupadd csye6225
 sudo useradd -s /bin/bash -g csye6225 -d /home/csye6225 -m csye6225
+sudo touch /home/csye6225/csye6225.log
+sudo chmod 766 /home/csye6225/csye6225.log
+sudo chown -R csye6225:csye6225 /home/csye6225/csye6225.log
+
 
 
 sudo mv /home/admin/webapp.zip /home/csye6225/
@@ -60,6 +67,38 @@ sudo chmod -R 755 /opt/user.csv
 sudo npm i 
 # sudo node server.js
 
+# sudo echo '{
+#   "agent": {
+#     "metrics_collection_interval": 10,
+#     "logfile": "/var/logs/amazon-cloudwatch-agent.log"
+#   },
+#   "logs": {
+#     "logs_collected": {
+#       "files": {
+#         "collect_list": [
+#           {
+#             "file_path": "/home/csye6225/csye6225.log",
+#             "log_group_name": "csye6225",
+#             "log_stream_name": "webapp"
+#           }
+#         ]
+#       }
+#     },
+#     "log_stream_name": "cloudwatch_log_stream"
+#   },
+#   "metrics": {
+#     "metrics_collected": {
+#       "statsd": {
+#         "service_address": ":8125",
+#         "metrics_collection_interval": 15,
+#         "metrics_aggregation_interval": 300
+#       }
+#     }
+#   }
+# }' > /home/admin/config-file.json
+
+sudo mv /home/admin/config-file.json /home/csye6225/
+sudo chown -R csye6225:csye6225 /home/csye6225/config-file.json
 
 
 
@@ -90,6 +129,7 @@ EOF
 
 # Write the content to the service file
 echo "${webapp_service}" | sudo tee /etc/systemd/system/webapp.service
+sudo chown csye6225:csye6225 /etc/systemd/system/webapp.service
 
 # Reload systemd to acknowledge the new service file
 sudo systemctl daemon-reload

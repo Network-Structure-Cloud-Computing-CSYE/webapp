@@ -79,6 +79,11 @@ build {
     destination = "/home/admin/"
   }
 
+  provisioner "file" { // provision the files
+    source      = "./config/config.json"
+    destination = "/home/admin/"
+  }
+
   provisioner "shell" {
 
     script = "./scripts/setup_dependencies.sh" # setup maria-db server, node, npm and create database 'db_sequelize_mysql' 
