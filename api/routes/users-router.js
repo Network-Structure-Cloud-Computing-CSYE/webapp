@@ -44,13 +44,13 @@ router.post('/v1/assignments', authenticate, async (req, res) => {
             userId: req.user.id  // Assign the assignment to the authenticated user
         });
 
-        logger.info(`Assignment created successfully for ec2 ${hostname}`);
+        logger.info(`Assignment created successfully for ec2 `);
         client.increment('assignments.create.success.http.post');
 
         res.status(201).json(assignment);
     } catch (error) {
         // console.log(error)
-        logger.error(`Assignment creation failed: ${error.message} for ec2 ${hostname}`);
+        logger.error(`Assignment creation failed: ${error.message}`);
         client.increment('assignments.create.failure.http.post');
         res.status(503).send('Service Unavailaible');
     }
@@ -117,13 +117,13 @@ router.delete('/v1/assignments/:id', authenticate, async (req, res) => {
 
         // If the assignment doesn't exist or doesn't belong to the authenticated user
         if (!assignment) {
-            logger.error(`Delete Error: Assignment with ID ${req.params.id} not found for user ${req.user.id} for ec2 ${hostname}.`);
+            logger.error(`Delete Error: Assignment with ID ${req.params.id} not found for user ${req.user.id}.`);
             client.increment('assignments.delete.notFound.http.delete');
             return res.status(404).send('Not Found');
         }
 
         await assignment.destroy();
-        logger.info(`Assignment with ID ${req.params.id} deleted successfully for user ${req.user.id} for ec2 ${hostname}.`);
+        logger.info(`Assignment with ID ${req.params.id} deleted successfully for user ${req.user.id}.`);
         client.increment('assignments.delete.success.http.delete');
         res.status(204).send();  // No Content response when deletion is successful
     } catch (error) {
@@ -154,7 +154,7 @@ router.get('/v1/assignments', authenticate, async (req, res) => {
             return res.status(204).send();
         }
          
-        logger.info(`Assignments retrieved for user ${req.user.id} for ec2 ${hostname}.`);
+        logger.info(`Assignments retrieved for user ${req.user.id}.`);
         client.increment('assignments.get.success');
         return res.status(200).json(assignments);
 
@@ -172,7 +172,7 @@ router.get('/v1/assignments/:id', authenticate, async (req, res) => {
 
         // If the assignment doesn't exist
         if (!assignment) {
-            logger.info(`Assignment with ID ${req.params.id} not found for ec2 ${hostname}.`);
+            logger.info(`Assignment with ID ${req.params.id} not found.`);
             client.increment('assignments.getById.notFound');
             return res.status(404).send('Not Found');
         }
