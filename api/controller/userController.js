@@ -1,4 +1,6 @@
 const sequelize  = require('../models/index')
+const client = require('../../metrics/index'); 
+const logger = require('../../logger/index'); 
 
 const check = async (req,res) =>  {
 console.log(req.query,req.body)

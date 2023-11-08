@@ -1,23 +1,15 @@
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, printf } = format;
-
-const myFormat = printf(({ level, message, timestamp }) => {
-    return `${timestamp} [${level}]: ${message}`;
-  });
-
-const productionLogger = () =>{
-
-    return createLogger({
-        level: 'info',
-        format: combine(
-          timestamp({ format: "HH:mm:ss" }),
-          myFormat
-        ),
-        transports: [
-         new transports.File({ filename: '/home/csye6225/csye6225.log' }),
-        ],
-      });
-
-}
-
-module.exports = productionLogger;
+const winston = require('winston');
+ 
+const  productionLogger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+   new winston.transports.Console(), // Log to the console
+   new winston.transports.File({ filename: '/home/csye6225/csye6225.log'}), // Log errors to a file
+ ],
+});
+ 
+module.exports =  productionLogger;
