@@ -1,5 +1,5 @@
 const productionLogger = require('./logger')
 
-let logger = productionLogger();
+let logger = productionLogger;
 
 module.exports =  logger;
