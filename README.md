@@ -101,5 +101,7 @@ New Terminal for new debian
 ssh -i ~/.ssh/digitalocean root@143.198.150.247
 curl -v http://localhost:3003/healthz
 
+assigment08
+
 
  
