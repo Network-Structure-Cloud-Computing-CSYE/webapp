@@ -44,6 +44,13 @@ router.post('/v1/assignments', authenticate, async (req, res) => {
 
         }
 
+        if (!Number.isInteger(num_of_attempts)) {
+            res.status(400).send('Bad Request: Number of attempts should be an integer.');
+            logger.error('Validation Error: Number of attempts should be an integer.');
+            client.increment('assignments.create.validationError.http.post');
+            return;
+        }
+
         // Since authenticated, user will be on the req object
         const assignment = await Assignment.create({
             name,
@@ -191,6 +198,15 @@ router.put('/v1/assignments/:id', authenticate, async (req, res) => {
             client.increment('assignments.update.validationError.http.put');
             return;
         }
+
+        // Validate num_of_attempts as an integer
+        if (!Number.isInteger(num_of_attempts)) {
+            res.status(400).send('Bad Request: Number of attempts should be an integer.');
+            logger.error('Validation Error: Number of attempts should be an integer.');
+            client.increment('assignments.create.validationError.http.post');
+            return;
+        }
+
 
         // Check if assignment exists and belongs to the authenticated user
         const assignment = await Assignment.findOne({
