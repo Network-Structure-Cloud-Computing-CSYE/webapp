@@ -14,7 +14,7 @@ const logger = require('../../logger/index');
 const {SubmissionService, getassignmentbyid}  = require('../service/SubmissionService')
 // Configure AWS credentials (assuming the EC2 instance has necessary permissions)
 AWS.config.update({
-    region: process.env['AWS_REGION']
+    region: process.env['AWS_REGION'],
  });
  // Create SNS service object
  const sns = new AWS.SNS();
