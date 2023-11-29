@@ -5,12 +5,22 @@ const userController = require('../controller/userController.js')
 const authenticate = require('../middleware/authenticate');
 
 const Assignment = require('../models/assignment');
+const AWS = require('aws-sdk');
 
 const router = require('express').Router()
 
 const client = require('../../metrics/index'); 
 const logger = require('../../logger/index'); 
-
+const {SubmissionService, getassignmentbyid}  = require('../service/SubmissionService')
+// Configure AWS credentials (assuming the EC2 instance has necessary permissions)
+AWS.config.update({
+    region: process.env['AWS_REGION']
+ });
+ // Create SNS service object
+ const sns = new AWS.SNS();
+  
+ // ARN of your SNS topic
+ const snsTopicArn = process.env['SNS_TOPIC_ARN'];
 
 
 
@@ -55,6 +65,119 @@ router.post('/v1/assignments', authenticate, async (req, res) => {
         res.status(503).send('Service Unavailaible');
     }
 });
+
+router.post('/v1/assignments/:assignmentId/submission', authenticate, async (req, res) => {
+
+    client.increment('endpoints.request.http.post.createSubmission');
+    logger.info('POST: ENTERING createSubmission controller method.');
+     const userId = req.user.id; // Assuming we have user information from authentication
+      const assignmentId = req.params.assignmentId; // get assignmentId from url
+      const submissionUrl = req.body.submission_url; // assuming we are doing ajv validation on submission schema
+      console.log('userId: ', userId);
+      console.log('assignmentId: ', assignmentId);
+      console.log('submissionUrl: ', submissionUrl);
+      let assignment;
+      try{
+         assignment = await getassignmentbyid(userId, assignmentId)
+      }catch(err){
+        //  next(err)
+         res.status(err.code).send(err.message)
+         return;
+      }
+    try {
+        let createdSubmission;
+        let SUBMISSION_ERROR = undefined;
+        try{   
+            createdSubmission = await  SubmissionService.createSubmission(userId, assignmentId, submissionUrl);
+        }catch(err){
+         console.log('in created submission err : ', err)
+            SUBMISSION_ERROR = err
+        }
+ 
+        console.log('createdSubmission :', createdSubmission)
+ 
+        console.log('req.user.email : ', req.user.email)
+        console.log('submission_url: ', submissionUrl)
+        console.log('userId = ', userId);
+        console.log('assignmentId = ', assignmentId);
+        console.log('submissionId = ', (!SUBMISSION_ERROR ? createdSubmission.id : 'NA'));
+        // Push to sns topic
+        const params = {
+         Message: JSON.stringify({email: req.user.email,
+                                  submission_url: submissionUrl,
+                                 userId: userId,
+                                 assignmentId: assignmentId,
+                                 submissionId: SUBMISSION_ERROR ? 'NA' : createdSubmission.id,
+                                 SUBMISSION_ERROR: SUBMISSION_ERROR
+                              }),
+         TopicArn: snsTopicArn,
+       };
+     
+         sns.publish(params, (err, data) => {
+            if (err) {
+               logger.error('POST: Error publishing to SNS topic.');
+               console.error("Error publishing message to SNS:", err);
+            } else {
+               console.log("Submission URL published to SNS:", data.MessageId);
+               logger.info('POST: Successfully published message to SNS')
+            }
+         });
+ 
+        if(SUBMISSION_ERROR)
+            throw SUBMISSION_ERROR
+         
+        logger.info('POST: EXITING createSubmission controller method with no errors')
+        client.increment('endpoints.response.http.post.success.createSubmission');
+    //   const userId = req.user.id; // Assuming we have user information from authentication
+    //   const assignmentId = req.params.assignmentId; // get assignmentId from url
+    //   const submissionUrl = req.body.submission_url; // assuming we are doing ajv validation on submission schema
+    //   console.log('userId: ', userId);
+    //   console.log('assignmentId: ', assignmentId);
+    //   console.log('submissionUrl: ', submissionUrl);
+
+    //   const createdSubmission = await SubmissionService.createSubmission(userId, assignmentId, submissionUrl);
+     
+    //   client.increment('endpoints.response.http.post.success.createAssignment');
+
+    //   console.log('req.user.email : ', req.user.email)
+    //   console.log('submission_url: ', submissionUrl)
+
+
+      // Push to sns topic
+    //   const params = {
+    //    Message: JSON.stringify({email: req.user.email,
+    //                             submission_url: submissionUrl}),
+    //    TopicArn: snsTopicArn,
+    //  };
+   
+    //    sns.publish(params, (err, data) => {
+    //       if (err) {
+    //          logger.error('POST: Error publishing to SNS topic.');
+    //          console.error("Error publishing message to SNS:", err);
+    //       } else {
+    //          console.log("Submission URL published to SNS:", data.MessageId);
+    //          logger.info('POST: Successfully published message to SNS')
+    //          logger.info('POST: EXITING createSubmission controller method with no errors')
+    //       }
+    //    });
+
+    //   setSuccessResponse(createdSubmission, StatusCodes.CREATED, res)
+   
+    res.status(201).send(createdSubmission)
+    return
+ 
+    } catch (error) {
+      client.increment('endpoints.response.http.post.failure.createSubmission');
+      logger.error(`POST: EXITING createSubmission controller method with error - `,error);
+      if (error.name === "ApiError") {
+        res.status(error.code).send(error.message)
+        return;
+      } 
+      res.status(503).send('Service Unavailable');
+    //   next(error); // Pass the error to the error handler middleware
+    }
+ })
+
 
 router.put('/v1/assignments/:id', authenticate, async (req, res) => {
     try {
@@ -196,7 +319,11 @@ router.get('/v1/assignments/:id', authenticate, async (req, res) => {
         client.increment('assignments.getById.unauthorized');
         res.status(401).send('Unauthorized');
     }
+
+
+
 });
+
 
 
  
