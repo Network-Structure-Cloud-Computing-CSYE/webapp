@@ -28,15 +28,15 @@ const Submission = sequelize.define("submission", {
     }
 );
  
-(async() => {
-   try{
-      await sequelize.sync()
-      console.log("Successfully synced 'submissions' Table");
-      logger.info('ORM: Successfully synced "submissions" table');
-   }catch(error){
-      logger.error('ORM: Error syncing "submissions" table');
-      console.log("Error syncing 'submissions' table")
-   }
-})()
+// (async() => {
+//    try{
+//       await sequelize.sync()
+//       console.log("Successfully synced 'submissions' Table");
+//       logger.info('ORM: Successfully synced "submissions" table');
+//    }catch(error){
+//       logger.error('ORM: Error syncing "submissions" table');
+//       console.log("Error syncing 'submissions' table")
+//    }
+// })()
  
 module.exports = Submission;
