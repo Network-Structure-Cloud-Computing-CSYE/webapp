@@ -8,8 +8,12 @@ const  productionLogger = winston.createLogger({
   ),
   transports: [
    new winston.transports.Console(), // Log to the console
+
    new winston.transports.File({ filename: '/home/csye6225/csye6225.log'}), 
   //  new winston.transports.File({ filename: '/Users/naman/Desktop/csye6225.log'}), // Log errors to a file
+  //  new winston.transports.File({ filename: '/home/csye6225/csye6225.log'}), 
+  // Log errors to a file
+
  ],
 });
  
