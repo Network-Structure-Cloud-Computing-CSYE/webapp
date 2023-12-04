@@ -79,87 +79,87 @@ jobs:
 
       
     - name: Reconfigure AWS Credentials for demo acc
-            uses: aws-actions/configure-aws-credentials@v1
-            with:
-              aws-access-key-id: ${{secrets.AWS_DEMO_ACCESS_KEY}}
-              aws-secret-access-key: ${{secrets.AWS_DEMO_SECRET_ACCESS_KEY}}
-              aws-region: ${{vars.AWS_REGION}}
-        
-          - name: Get latest AMI from "dev", update Launch Template, and refresh asg
-            id: get-latest-ami
-            run: |
-              latest_ami=$(aws ec2 describe-images \
-                              --owners ${{secrets.AWS_DEV_USER_ID}} \
-                              --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' \
-                              --region ${{vars.AWS_REGION}})
-              echo "Latest AMI ID: $latest_ami"
-            
-              # Get the latest Launch Template ID
-              latest_launch_template=$(aws ec2 describe-launch-templates \
-                              --filters "Name=launch-template-name,Values=Webapp_Launch_Template-*" \
-                              --query 'LaunchTemplates | sort_by(@, &CreateTime) | [-1].LaunchTemplateId' \
-                              --region ${{vars.AWS_REGION}})
-              echo "Latest Launch Template ID: $latest_launch_template"
-            
-              # Extracting Launch Template ID without quotes
-              latest_launch_template=$(echo $latest_launch_template | tr -d '"')
-              echo "Latest Launch Template ID without quotes: $latest_launch_template"
-            
-              # Get the latest Launch Template version before updation
-              latest_version=$(aws ec2 describe-launch-template-versions \
-                              --launch-template-id $latest_launch_template \
-                              --query 'LaunchTemplateVersions | sort_by(@, &VersionNumber) | [-1].VersionNumber' \
-                              --region ${{vars.AWS_REGION}})
-              echo "Latest Launch Template Version before updation: $latest_version"
-            
-              # Create a new Launch Template version with the updated AMI ID
-              aws ec2 create-launch-template-version \
-                              --launch-template-id $latest_launch_template \
-                              --launch-template-data "{\"ImageId\":$latest_ami}" \
-                              --source-version $latest_version \
-                              --region ${{vars.AWS_REGION}}
-                            
-              # Get the latest Launch Template version after updation
-              latest_version=$(aws ec2 describe-launch-template-versions \
-                              --launch-template-id $latest_launch_template \
-                              --query 'LaunchTemplateVersions | sort_by(@, &VersionNumber) | [-1].VersionNumber' \
-                              --region ${{vars.AWS_REGION}})
-              echo "Latest Launch Template Version after updation: $latest_version"
-            
-              desired_config="{
-                  \"LaunchTemplate\": {
-                \"LaunchTemplateId\": \"$latest_launch_template\",
-                \"Version\": \"$latest_version\"
-                }
-              }"
-              echo "Desired launch temp config : $desired_config"
-            
-              # Get the latest Auto Scaling Group name matching the pattern
-              autoscaling_group_name=$(aws autoscaling describe-auto-scaling-groups \
-                                  --query "AutoScalingGroups[?contains(AutoScalingGroupName, 'autoscaling-group-')].{Name: AutoScalingGroupName} | sort_by(@, &Name)[-1].Name" \
-                                  --region ${{vars.AWS_REGION}})
-              echo "Latest Auto Scaling Group Name: $autoscaling_group_name"
-            
-              # Extracting autoscaling_group_name without quotes
-              autoscaling_group_name=$(echo "$autoscaling_group_name" | tr -d '"')
-              echo "Latest Auto Scaling Group Name without quotes: $autoscaling_group_name"
-            
-              # Trigger instance refresh and capture the ID
-              refresh_id=$(aws autoscaling start-instance-refresh --auto-scaling-group-name $autoscaling_group_name --desired-configuration "$desired_config" --query 'InstanceRefreshId' --output text)
-            
-              # Loop to check instance refresh status
-              while true; do
-                  status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name $autoscaling_group_name --instance-refresh-ids $refresh_id --query 'InstanceRefreshes[0].Status' --output text)
-                  echo "Instance Refresh Status: $status"
-                  if [[ "$status" == "Successful" ]]; then
-                      break
-                  elif [[ "$status" == "Failed" ]]; then
-                      echo "Instance refresh failed."
-                      exit 1  # Exit with error code
-                  else
-                      sleep 30
-                  fi
-              done
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{secrets.AWS_DEMO_ACCESS_KEY}}
+        aws-secret-access-key: ${{secrets.AWS_DEMO_SECRET_ACCESS_KEY}}
+        aws-region: ${{vars.AWS_REGION}}
+  
+    - name: Get latest AMI from "dev", update Launch Template, and refresh asg
+      id: get-latest-ami
+      run: |
+        latest_ami=$(aws ec2 describe-images \
+                        --owners ${{secrets.AWS_DEV_USER_ID}} \
+                        --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' \
+                        --region ${{vars.AWS_REGION}})
+        echo "Latest AMI ID: $latest_ami"
+      
+        # Get the latest Launch Template ID
+        latest_launch_template=$(aws ec2 describe-launch-templates \
+                        --filters "Name=launch-template-name,Values=Webapp_Launch_Template-*" \
+                        --query 'LaunchTemplates | sort_by(@, &CreateTime) | [-1].LaunchTemplateId' \
+                        --region ${{vars.AWS_REGION}})
+        echo "Latest Launch Template ID: $latest_launch_template"
+      
+        # Extracting Launch Template ID without quotes
+        latest_launch_template=$(echo $latest_launch_template | tr -d '"')
+        echo "Latest Launch Template ID without quotes: $latest_launch_template"
+      
+        # Get the latest Launch Template version before updation
+        latest_version=$(aws ec2 describe-launch-template-versions \
+                        --launch-template-id $latest_launch_template \
+                        --query 'LaunchTemplateVersions | sort_by(@, &VersionNumber) | [-1].VersionNumber' \
+                        --region ${{vars.AWS_REGION}})
+        echo "Latest Launch Template Version before updation: $latest_version"
+      
+        # Create a new Launch Template version with the updated AMI ID
+        aws ec2 create-launch-template-version \
+                        --launch-template-id $latest_launch_template \
+                        --launch-template-data "{\"ImageId\":$latest_ami}" \
+                        --source-version $latest_version \
+                        --region ${{vars.AWS_REGION}}
+                      
+        # Get the latest Launch Template version after updation
+        latest_version=$(aws ec2 describe-launch-template-versions \
+                        --launch-template-id $latest_launch_template \
+                        --query 'LaunchTemplateVersions | sort_by(@, &VersionNumber) | [-1].VersionNumber' \
+                        --region ${{vars.AWS_REGION}})
+        echo "Latest Launch Template Version after updation: $latest_version"
+      
+        desired_config="{
+            \"LaunchTemplate\": {
+          \"LaunchTemplateId\": \"$latest_launch_template\",
+          \"Version\": \"$latest_version\"
+          }
+        }"
+        echo "Desired launch temp config : $desired_config"
+      
+        # Get the latest Auto Scaling Group name matching the pattern
+        autoscaling_group_name=$(aws autoscaling describe-auto-scaling-groups \
+                            --query "AutoScalingGroups[?contains(AutoScalingGroupName, 'autoscaling-group-')].{Name: AutoScalingGroupName} | sort_by(@, &Name)[-1].Name" \
+                            --region ${{vars.AWS_REGION}})
+        echo "Latest Auto Scaling Group Name: $autoscaling_group_name"
+      
+        # Extracting autoscaling_group_name without quotes
+        autoscaling_group_name=$(echo "$autoscaling_group_name" | tr -d '"')
+        echo "Latest Auto Scaling Group Name without quotes: $autoscaling_group_name"
+      
+        # Trigger instance refresh and capture the ID
+        refresh_id=$(aws autoscaling start-instance-refresh --auto-scaling-group-name $autoscaling_group_name --desired-configuration "$desired_config" --query 'InstanceRefreshId' --output text)
+      
+        # Loop to check instance refresh status
+        while true; do
+            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name $autoscaling_group_name --instance-refresh-ids $refresh_id --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Instance Refresh Status: $status"
+            if [[ "$status" == "Successful" ]]; then
+                break
+            elif [[ "$status" == "Failed" ]]; then
+                echo "Instance refresh failed."
+                exit 1  # Exit with error code
+            else
+                sleep 30
+            fi
+        done
  
 
 
