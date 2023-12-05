@@ -96,7 +96,7 @@ jobs:
       
         # Get the latest Launch Template ID
         latest_launch_template=$(aws ec2 describe-launch-templates \
-                        --filters "Name=launch-template-name,Values=Webapp_Launch_Template-*" \
+                        --filters "Name=launch-template-name,Values=my-launch-template-*" \
                         --query 'LaunchTemplates | sort_by(@, &CreateTime) | [-1].LaunchTemplateId' \
                         --region ${{vars.AWS_REGION}})
         echo "Latest Launch Template ID: $latest_launch_template"
@@ -136,7 +136,7 @@ jobs:
       
         # Get the latest Auto Scaling Group name matching the pattern
         autoscaling_group_name=$(aws autoscaling describe-auto-scaling-groups \
-                            --query "AutoScalingGroups[?contains(AutoScalingGroupName, 'autoscaling-group-')].{Name: AutoScalingGroupName} | sort_by(@, &Name)[-1].Name" \
+                            --query "AutoScalingGroups[?contains(AutoScalingGroupName, 'my-auto-scaling-')].{Name: AutoScalingGroupName} | sort_by(@, &Name)[-1].Name" \
                             --region ${{vars.AWS_REGION}})
         echo "Latest Auto Scaling Group Name: $autoscaling_group_name"
       
