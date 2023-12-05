@@ -28,7 +28,7 @@ router.get('/healthz', userController.check)
 
 //router.post('assignment', authenticate, )
 
-router.post('/v2/assignments', authenticate, async (req, res) => {
+router.post('/v1/assignments', authenticate, async (req, res) => {
     try {
         
 
@@ -73,7 +73,7 @@ router.post('/v2/assignments', authenticate, async (req, res) => {
     }
 });
 
-router.post('/v2/assignments/:assignmentId/submission', authenticate, async (req, res) => {
+router.post('/v1/assignments/:assignmentId/submission', authenticate, async (req, res) => {
 
     client.increment('endpoints.request.http.post.createSubmission');
     logger.info('POST: ENTERING createSubmission controller method.');
@@ -186,7 +186,7 @@ router.post('/v2/assignments/:assignmentId/submission', authenticate, async (req
  })
 
 
-router.put('/v2/assignments/:id', authenticate, async (req, res) => {
+router.put('/v1/assignments/:id', authenticate, async (req, res) => {
     try {
         const { name, points, num_of_attempts, deadline } = req.body;
 
@@ -245,7 +245,7 @@ router.put('/v2/assignments/:id', authenticate, async (req, res) => {
 });
 
 
-router.delete('/v2/assignments/:id', authenticate, async (req, res) => {
+router.delete('/v1/assignments/:id', authenticate, async (req, res) => {
     try {
         const assignment = await Assignment.findOne({
             where: {
@@ -274,7 +274,7 @@ router.delete('/v2/assignments/:id', authenticate, async (req, res) => {
 });
 
 
-router.get('/v2/assignments', authenticate, async (req, res) => {
+router.get('/v1/assignments', authenticate, async (req, res) => {
     try {
        
         if (!req.user) {
@@ -305,7 +305,7 @@ router.get('/v2/assignments', authenticate, async (req, res) => {
     }
 });
 
-router.get('/v2/assignments/:id', authenticate, async (req, res) => {
+router.get('/v1/assignments/:id', authenticate, async (req, res) => {
     try {
         const assignment = await Assignment.findByPk(req.params.id);
 
